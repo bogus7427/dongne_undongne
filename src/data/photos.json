@@ -1,0 +1,23 @@
+{
+  "_info": "사진 출처: Unsplash (https://unsplash.com) - Unsplash 라이선스로 무료 사용 가능. 작가 이름과 링크를 함께 표시해요.",
+  "swimming":    { "id": "photo-1530549387789-4c1017266635", "author": "Gentrit Sylejmani", "page": "https://unsplash.com/photos/JjUyjE-oEbM" },
+  "fitness":     { "id": "photo-1517836357463-d25dfeac3438", "author": "Victor Freitas", "page": "https://unsplash.com/photos/WvDYdXDzkhs" },
+  "yoga":        { "id": "photo-1544367567-0f2fcb009e0b", "author": "kike vega", "page": "https://unsplash.com/photos/F2qh3yjz6Jk" },
+  "pilates":     { "id": "photo-1747239069226-55382c570116", "author": "ROXANA POPOVICI", "page": "https://unsplash.com/photos/aY5uOJ2o96g" },
+  "badminton":   { "id": "photo-1626224583764-f87db24ac4ea", "author": "Muktasim Azlan", "page": "https://unsplash.com/photos/rjWfNR_AC5g" },
+  "tabletennis": { "id": "photo-1676827613262-5fba25cee5fd", "author": "Inkiipow", "page": "https://unsplash.com/photos/JwxatcF2Oec" },
+  "tennis":      { "id": "photo-1554068865-24cecd4e34b8", "author": "Moises Alex", "page": "https://unsplash.com/photos/WqI-PbYugn4" },
+  "soccer":      { "id": "photo-1431324155629-1a6deb1dec8d", "author": "Abigail Keenan", "page": "https://unsplash.com/photos/8-s5QuUBtyM" },
+  "taekwondo":   { "id": "photo-1564415315949-7a0c4c73aab4", "author": "Jonathan Borba", "page": "https://unsplash.com/photos/Yf1SegAI84o" },
+  "hapkido":     { "id": "photo-1514050566906-8d077bae7046", "author": "Uriel Soberanes", "page": "https://unsplash.com/photos/ngd2uo1eyZg" },
+  "jiujitsu":    { "id": "photo-1780476870650-5f5ef733c78e", "author": "Diego Corona", "page": "https://unsplash.com/photos/QIlNZdfpqsw" },
+  "judo":        { "id": "photo-1782849159378-a068078370bf", "author": "Konstantinos Papadopoulos", "page": "https://unsplash.com/photos/cKPNZuKi-wo" },
+  "kickboxing":  { "id": "photo-1773289338309-50476faedda2", "author": "Anastase Maragos", "page": "https://unsplash.com/photos/IXMERRfOhog" },
+  "boxing":      { "id": "photo-1549719386-74dfcbf7dbed", "author": "Bogdan Yukhymchuk", "page": "https://unsplash.com/photos/XmvuWRDimrg" },
+  "kendo":       { "id": "photo-1512928735464-5cc10b1eb091", "author": "B Vi", "page": "https://unsplash.com/photos/KO3ywBQo5IU" },
+  "muaythai":    { "id": "photo-1525680996651-0222228be6f0", "author": "Pablo Rebolledo", "page": "https://unsplash.com/photos/h8sl-oNcat0" },
+  "mma":         { "id": "photo-1767971162450-9477017b2cb1", "author": "Michael Deubner", "page": "https://unsplash.com/photos/J26TT4wzMEE" },
+  "martial":     { "id": "photo-1656653121475-e33829581294", "author": "Nguyen Hung", "page": "https://unsplash.com/photos/FktPF6cwIWo" },
+  "hero":        { "id": "photo-1549524362-47d913ec9a0e", "author": "vikram sundaramoorthy", "page": "https://unsplash.com/photos/WAET6eoyVT4" },
+  "program":     { "id": "photo-1526506118085-60ce8714f8c5", "author": "Edgar Chaparro", "page": "https://unsplash.com/photos/sHfo3WOgGTU" }
+}

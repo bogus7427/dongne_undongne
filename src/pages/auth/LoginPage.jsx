@@ -4,11 +4,11 @@ import { supabase, SUPABASE_MISSING_MESSAGE, toKoreanError } from '../../lib/sup
 import { useAuth } from '../../hooks/authContext.js'
 import Notice from '../../components/Notice.jsx'
 
-export default function LoginPage() {
+export default function LoginPage({ defaultNext = '/mypage', ownerMode = false }) {
   const [params] = useSearchParams()
   // 로그인 후 돌아갈 곳 (우리 사이트 안의 주소만 허용)
-  const rawNext = params.get('next') || '/mypage'
-  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/mypage'
+  const rawNext = params.get('next') || defaultNext
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : defaultNext
   const navigate = useNavigate()
   const { user } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
@@ -30,8 +30,9 @@ export default function LoginPage() {
 
   return (
     <section className="auth-box">
-      <p className="eyebrow">LOGIN</p>
-      <h1 className="section-title">로그인</h1>
+      <p className="eyebrow">{ownerMode ? 'BIZ LOGIN' : 'LOGIN'}</p>
+      <h1 className="section-title">{ownerMode ? '🏢 시설자 로그인' : '로그인'}</h1>
+      {ownerMode && <p className="muted">체육시설 업체회원 전용이에요. 회원·출석·수강료·할인을 관리해요.</p>}
       <form onSubmit={handleSubmit} className="form">
         <label>
           이메일
@@ -49,7 +50,8 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="auth-switch">
-        아직 회원이 아니신가요? <Link to="/signup">회원가입</Link>
+        아직 회원이 아니신가요? <Link to={ownerMode ? '/signup?type=owner&next=/biz' : '/signup'}>{ownerMode ? '업체회원 가입' : '회원가입'}</Link>
+        {ownerMode && <> · <Link to="/biz/demo">가입 없이 체험해 보기</Link></>}
       </p>
     </section>
   )

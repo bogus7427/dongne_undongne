@@ -29,8 +29,9 @@ export default function SubNav() {
             </>
           )}
           <NavLink to="/discounts" className="subnav-btn subnav-discount">💸 할인제도</NavLink>
+          <NavLink to="/program" className="subnav-btn subnav-program">🗂️ 회원관리</NavLink>
           <NavLink to="/supports" className="subnav-btn">🎁 지원 제도</NavLink>
-          <NavLink to="/martial" className="subnav-btn hide-mobile">🥋 무술</NavLink>
+          <NavLink to="/martial" className="subnav-btn">🥋 무술</NavLink>
         </div>
       </div>
       <SideBanner />

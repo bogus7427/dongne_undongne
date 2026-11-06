@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { supabase, toKoreanError } from '../../lib/supabase.js'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { toKoreanError } from '../../lib/supabase.js'
+import { useDb } from '../../lib/dbContext.js'
 import Notice from '../../components/Notice.jsx'
+import { maskName, maskPhone, maskMoney, formatMoney } from '../../utils/mask.js'
+import MessageTab from './MessageTab.jsx'
 
 // 오늘 날짜 "2026-11-06", 이번 달 "2026-11"
 const today = () => new Date().toLocaleDateString('sv-SE')
@@ -10,29 +13,34 @@ const thisMonth = () => today().slice(0, 7)
 const MEMBER_STATUS = { active: '수강 중', paused: '휴원', left: '퇴원' }
 const EMPTY_MEMBER = { name: '', phone: '', course: '', monthly_fee: '', joined_on: '', memo: '' }
 
-// 업체용 회원 관리: 회원 명단 / 출석 / 수강료
+// 업체용 회원 관리: 회원 명단 / 출석 / 수강료 / 메시지
+// 이름·연락처·수강료는 기본으로 * 처리해서 보여 줘요. (옆 사람이 화면을 봐도 안전하게)
 export default function MembersPage() {
+  const { db, base } = useDb() // 진짜 DB 또는 체험판 DB
   const { facilityId } = useParams()
-  const [tab, setTab] = useState('members')
+  const [params] = useSearchParams()
+  // 대시보드에서 ?tab=attendance 처럼 바로 원하는 탭으로 들어올 수 있어요
+  const [tab, setTab] = useState(['attendance', 'payments', 'message'].includes(params.get('tab')) ? params.get('tab') : 'members')
   const [facility, setFacility] = useState(null)
   const [members, setMembers] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [error, setError] = useState('')
+  const [reveal, setReveal] = useState(false) // true면 * 없이 원래대로 보기
 
   const loadMembers = useCallback(async () => {
-    const { data, error } = await supabase.from('members').select('*')
+    const { data, error } = await db.from('members').select('*')
       .eq('facility_id', facilityId).order('created_at', { ascending: true })
     if (error) setError(toKoreanError(error))
     else setMembers(data)
     setLoaded(true)
-  }, [facilityId])
+  }, [facilityId, db])
 
   useEffect(() => {
     let cancelled = false
-    supabase.from('facilities').select('id, name, status').eq('id', facilityId).maybeSingle()
+    db.from('facilities').select('id, name, status').eq('id', facilityId).maybeSingle()
       .then(({ data }) => { if (!cancelled) setFacility(data) })
     // 처음 한 번 회원 목록 불러오기 (결과는 비동기로 들어와요)
-    supabase.from('members').select('*').eq('facility_id', facilityId).order('created_at', { ascending: true })
+    db.from('members').select('*').eq('facility_id', facilityId).order('created_at', { ascending: true })
       .then(({ data, error }) => {
         if (cancelled) return
         if (error) setError(toKoreanError(error))
@@ -40,28 +48,33 @@ export default function MembersPage() {
         setLoaded(true)
       })
     return () => { cancelled = true }
-  }, [facilityId])
+  }, [facilityId, db])
 
   return (
     <section>
-      <Link to="/owner" className="back-link">← 내 시설 관리</Link>
+      <Link to={base} className="back-link">← 대시보드</Link>
       <p className="eyebrow">MEMBERS</p>
       <h1 className="section-title">{facility?.name || '시설'} 회원 관리</h1>
 
       <div className="type-tabs" role="tablist">
-        {[['members', '👥 회원 명단'], ['attendance', '✅ 출석'], ['payments', '💰 수강료']].map(([key, label]) => (
+        {[['members', '👥 회원 명단'], ['attendance', '✅ 출석'], ['payments', '💰 수강료'], ['message', '💬 문자']].map(([key, label]) => (
           <button key={key} role="tab" aria-selected={tab === key} className={tab === key ? 'is-active' : ''} onClick={() => setTab(key)}>
             {label}
           </button>
         ))}
+        <button type="button" className={`privacy-toggle ${reveal ? 'is-open' : ''}`} onClick={() => setReveal(!reveal)}
+          title="이름·연락처·수강료를 * 로 가리거나 보여요">
+          {reveal ? '👁 개인정보 보이는 중' : '🔒 개인정보 가림'}
+        </button>
       </div>
 
       {error && <Notice type="error">{error}</Notice>}
       {!loaded ? <Notice>⏳ 불러오는 중...</Notice> : (
         <>
-          {tab === 'members' && <MemberList facilityId={facilityId} members={members} reload={loadMembers} />}
-          {tab === 'attendance' && <AttendanceTab facilityId={facilityId} members={members} />}
-          {tab === 'payments' && <PaymentsTab facilityId={facilityId} members={members} />}
+          {tab === 'members' && <MemberList facilityId={facilityId} members={members} reload={loadMembers} reveal={reveal} />}
+          {tab === 'attendance' && <AttendanceTab facilityId={facilityId} members={members} reveal={reveal} />}
+          {tab === 'payments' && <PaymentsTab facilityId={facilityId} members={members} reveal={reveal} />}
+          {tab === 'message' && <MessageTab facilityId={facilityId} facilityName={facility?.name} members={members} reveal={reveal} />}
         </>
       )}
 
@@ -73,7 +86,9 @@ export default function MembersPage() {
 }
 
 // ---------------- 회원 명단 ----------------
-function MemberList({ facilityId, members, reload }) {
+function MemberList({ facilityId, members, reload, reveal }) {
+  const name = (m) => (reveal ? m.name : maskName(m.name))
+  const { db } = useDb() // 진짜 DB 또는 체험판 DB
   const [form, setForm] = useState(EMPTY_MEMBER)
   const [editingId, setEditingId] = useState(null) // null이면 새 회원 추가
   const [filter, setFilter] = useState('active')
@@ -98,8 +113,8 @@ function MemberList({ facilityId, members, reload }) {
       monthly_fee: Number(form.monthly_fee) || 0, joined_on: form.joined_on || today(), memo: form.memo.trim(),
     }
     const { error } = editingId
-      ? await supabase.from('members').update(row).eq('id', editingId)
-      : await supabase.from('members').insert({ ...row, facility_id: facilityId })
+      ? await db.from('members').update(row).eq('id', editingId)
+      : await db.from('members').insert({ ...row, facility_id: facilityId })
     if (error) return setError(toKoreanError(error))
     setForm(EMPTY_MEMBER)
     setEditingId(null)
@@ -107,14 +122,14 @@ function MemberList({ facilityId, members, reload }) {
   }
 
   async function changeStatus(m, status) {
-    const { error } = await supabase.from('members').update({ status }).eq('id', m.id)
+    const { error } = await db.from('members').update({ status }).eq('id', m.id)
     if (error) setError(toKoreanError(error))
     else reload()
   }
 
   async function remove(m) {
-    if (!window.confirm(`${m.name} 회원과 출석·수강료 기록을 삭제할까요?`)) return
-    const { error } = await supabase.from('members').delete().eq('id', m.id)
+    if (!window.confirm(`${name(m)} 회원과 출석·수강료 기록을 삭제할까요?`)) return
+    const { error } = await db.from('members').delete().eq('id', m.id)
     if (error) setError(toKoreanError(error))
     else reload()
   }
@@ -122,7 +137,10 @@ function MemberList({ facilityId, members, reload }) {
   // 엑셀에서 열 수 있는 CSV 파일로 내려받기
   function downloadCsv() {
     const header = ['이름', '연락처', '강좌', '월 수강료', '등록일', '상태', '메모']
-    const rows = shown.map((m) => [m.name, m.phone, m.course, m.monthly_fee, m.joined_on, MEMBER_STATUS[m.status], m.memo])
+    // 가림 상태에서는 가린 값으로 내려받아요. (원본이 필요하면 👁 보기로 바꾼 뒤 내려받기)
+    const rows = shown.map((m) => reveal
+      ? [m.name, m.phone, m.course, m.monthly_fee, m.joined_on, MEMBER_STATUS[m.status], m.memo]
+      : [maskName(m.name), maskPhone(m.phone), m.course, maskMoney(m.monthly_fee), m.joined_on, MEMBER_STATUS[m.status], ''])
     const csv = [header, ...rows].map((r) => r.map((v) => `"${String(v ?? '').replaceAll('"', '""')}"`).join(',')).join('\n')
     const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }) // 맨 앞의 BOM 문자: 엑셀에서 한글이 깨지지 않게
     const a = document.createElement('a')
@@ -170,10 +188,10 @@ function MemberList({ facilityId, members, reload }) {
             <tbody>
               {shown.map((m) => (
                 <tr key={m.id}>
-                  <td><strong>{m.name}</strong>{m.memo && <div className="muted small-text">{m.memo}</div>}</td>
-                  <td>{m.phone}</td>
+                  <td><strong>{name(m)}</strong>{reveal && m.memo && <div className="muted small-text">{m.memo}</div>}</td>
+                  <td>{reveal ? m.phone : maskPhone(m.phone)}</td>
                   <td>{m.course}</td>
-                  <td>{m.monthly_fee ? `${m.monthly_fee.toLocaleString()}원` : '-'}</td>
+                  <td>{reveal ? formatMoney(m.monthly_fee) : maskMoney(m.monthly_fee)}</td>
                   <td>{m.joined_on}</td>
                   <td>
                     <select value={m.status} onChange={(e) => changeStatus(m, e.target.value)} aria-label="상태">
@@ -195,7 +213,8 @@ function MemberList({ facilityId, members, reload }) {
 }
 
 // ---------------- 출석 ----------------
-function AttendanceTab({ facilityId, members }) {
+function AttendanceTab({ facilityId, members, reveal }) {
+  const { db } = useDb() // 진짜 DB 또는 체험판 DB
   const [date, setDate] = useState(today())
   const [state, setState] = useState({ key: '', checked: new Set(), monthCount: {} })
   const [error, setError] = useState('')
@@ -207,14 +226,14 @@ function AttendanceTab({ facilityId, members }) {
     const [y, mo] = month.split('-').map(Number)
     const end = new Date(y, mo, 1).toLocaleDateString('sv-SE') // 다음 달 1일
     // 이 달의 출석 기록을 한 번에 불러와서 "오늘 출석"과 "이번 달 출석 횟수"를 같이 계산
-    const { data, error } = await supabase.from('attendance').select('member_id, date')
+    const { data, error } = await db.from('attendance').select('member_id, date')
       .eq('facility_id', facilityId).gte('date', `${month}-01`).lt('date', end)
     if (error) return setError(toKoreanError(error))
     const checked = new Set(data.filter((r) => r.date === date).map((r) => r.member_id))
     const monthCount = {}
     data.forEach((r) => { monthCount[r.member_id] = (monthCount[r.member_id] || 0) + 1 })
     setState({ key: `${facilityId}|${date}`, checked, monthCount })
-  }, [facilityId, date])
+  }, [facilityId, date, db])
 
   useEffect(() => {
     let cancelled = false
@@ -226,8 +245,8 @@ function AttendanceTab({ facilityId, members }) {
     setError('')
     const isChecked = state.checked.has(member.id)
     const { error } = isChecked
-      ? await supabase.from('attendance').delete().eq('member_id', member.id).eq('date', date)
-      : await supabase.from('attendance').insert({ facility_id: facilityId, member_id: member.id, date })
+      ? await db.from('attendance').delete().eq('member_id', member.id).eq('date', date)
+      : await db.from('attendance').insert({ facility_id: facilityId, member_id: member.id, date })
     if (error) setError(toKoreanError(error))
     else load()
   }
@@ -246,7 +265,7 @@ function AttendanceTab({ facilityId, members }) {
             return (
               <button key={m.id} type="button" className={`attendance-btn ${on ? 'is-on' : ''}`} onClick={() => toggle(m)} aria-pressed={on}>
                 <span className="check">{on ? '✅' : '⬜'}</span>
-                <strong>{m.name}</strong>
+                <strong>{reveal ? m.name : maskName(m.name)}</strong>
                 <small>{m.course ? `${m.course} · ` : ''}이번 달 {state.monthCount[m.id] || 0}회</small>
               </button>
             )
@@ -258,17 +277,19 @@ function AttendanceTab({ facilityId, members }) {
 }
 
 // ---------------- 수강료 ----------------
-function PaymentsTab({ facilityId, members }) {
+function PaymentsTab({ facilityId, members, reveal }) {
+  const money = (n) => (reveal ? formatMoney(n) : maskMoney(n))
+  const { db } = useDb() // 진짜 DB 또는 체험판 DB
   const [month, setMonth] = useState(thisMonth())
   const [payments, setPayments] = useState({ key: '', byMember: {} })
   const [error, setError] = useState('')
   const targets = members.filter((m) => m.status === 'active')
 
   const load = useCallback(async () => {
-    const { data, error } = await supabase.from('payments').select('*').eq('facility_id', facilityId).eq('month', month)
+    const { data, error } = await db.from('payments').select('*').eq('facility_id', facilityId).eq('month', month)
     if (error) return setError(toKoreanError(error))
     setPayments({ key: month, byMember: Object.fromEntries(data.map((p) => [p.member_id, p])) })
-  }, [facilityId, month])
+  }, [facilityId, month, db])
 
   useEffect(() => {
     let cancelled = false
@@ -278,7 +299,7 @@ function PaymentsTab({ facilityId, members }) {
 
   async function markPaid(member, method) {
     setError('')
-    const { error } = await supabase.from('payments').upsert(
+    const { error } = await db.from('payments').upsert(
       { facility_id: facilityId, member_id: member.id, month, amount: member.monthly_fee || 0, method, paid_on: today() },
       { onConflict: 'member_id,month' },
     )
@@ -287,8 +308,8 @@ function PaymentsTab({ facilityId, members }) {
   }
 
   async function cancelPaid(member) {
-    if (!window.confirm(`${member.name} 회원의 ${month} 납부 기록을 취소할까요?`)) return
-    const { error } = await supabase.from('payments').delete().eq('member_id', member.id).eq('month', month)
+    if (!window.confirm(`${reveal ? member.name : maskName(member.name)} 회원의 ${month} 납부 기록을 취소할까요?`)) return
+    const { error } = await db.from('payments').delete().eq('member_id', member.id).eq('month', month)
     if (error) setError(toKoreanError(error))
     else load()
   }
@@ -308,7 +329,7 @@ function PaymentsTab({ facilityId, members }) {
         <label>월 <input type="month" value={month} onChange={(e) => setMonth(e.target.value || thisMonth())} /></label>
         <span className="pay-summary">
           납부 <strong>{summary.paidCount}</strong> · 미납 <strong className="text-danger">{summary.unpaidCount}</strong> ·
-          합계 <strong>{summary.total.toLocaleString()}원</strong>
+          합계 <strong>{money(summary.total)}</strong>
         </span>
       </div>
       {error && <Notice type="error">{error}</Notice>}
@@ -321,9 +342,9 @@ function PaymentsTab({ facilityId, members }) {
                 const p = payments.byMember[m.id]
                 return (
                   <tr key={m.id} className={p ? '' : 'row-unpaid'}>
-                    <td><strong>{m.name}</strong></td>
+                    <td><strong>{reveal ? m.name : maskName(m.name)}</strong></td>
                     <td>{m.course}</td>
-                    <td>{m.monthly_fee ? `${m.monthly_fee.toLocaleString()}원` : '-'}</td>
+                    <td>{money(m.monthly_fee)}</td>
                     <td>{p ? <span className="status-badge status-approved">납부 ({p.method || '기타'}, {p.paid_on})</span> : <span className="status-badge status-rejected">미납</span>}</td>
                     <td className="row-actions">
                       {p ? (

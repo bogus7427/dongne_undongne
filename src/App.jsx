@@ -1,9 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import SubNav from './components/SubNav.jsx'
 import MartialPage from './pages/MartialPage.jsx'
 import DiscountsHubPage from './pages/DiscountsHubPage.jsx'
+import ProgramPage from './pages/ProgramPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import SportDetailPage from './pages/SportDetailPage.jsx'
 import SearchPage from './pages/SearchPage.jsx'
@@ -15,15 +16,22 @@ import PlaceDetailPage from './pages/PlaceDetailPage.jsx'
 import LoginPage from './pages/auth/LoginPage.jsx'
 import SignupPage from './pages/auth/SignupPage.jsx'
 import MyPage from './pages/MyPage.jsx'
-import OwnerHomePage from './pages/owner/OwnerHomePage.jsx'
-import FacilityFormPage from './pages/owner/FacilityFormPage.jsx'
-import MembersPage from './pages/owner/MembersPage.jsx'
-import DiscountsPage from './pages/owner/DiscountsPage.jsx'
 import AdminPage from './pages/admin/AdminPage.jsx'
 import RequireAuth from './components/RequireAuth.jsx'
+import BizApp from './biz/BizApp.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
+// /owner/facilities/1/members → /biz/facilities/1/members
+function OwnerRedirect() {
+  const location = useLocation()
+  return <Navigate to={location.pathname.replace(/^\/owner/, '/biz') + location.search} replace />
+}
+
 export default function App() {
+  const location = useLocation()
+  // 🏢 시설자 모드는 일반 사이트 틀(헤더·배너·푸터) 없이 따로 보여 줘요
+  if (location.pathname.startsWith('/biz')) return <BizApp />
+
   return (
     <div className="app">
       <Header />
@@ -35,6 +43,8 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/martial" element={<MartialPage />} />
           <Route path="/discounts" element={<DiscountsHubPage />} />
+          <Route path="/program" element={<ProgramPage />} />
+          <Route path="/program/demo/*" element={<Navigate to="/biz/demo" replace />} />
           <Route path="/facility/:facilityId" element={<FacilityDetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/supports" element={<SupportsPage />} />
@@ -46,12 +56,8 @@ export default function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/mypage" element={<RequireAuth><MyPage /></RequireAuth>} />
 
-          {/* 시설업체 회원 전용 */}
-          <Route path="/owner" element={<RequireAuth role="owner"><OwnerHomePage /></RequireAuth>} />
-          <Route path="/owner/facilities/new" element={<RequireAuth role="owner"><FacilityFormPage /></RequireAuth>} />
-          <Route path="/owner/facilities/:facilityId/edit" element={<RequireAuth role="owner"><FacilityFormPage /></RequireAuth>} />
-          <Route path="/owner/facilities/:facilityId/members" element={<RequireAuth role="owner"><MembersPage /></RequireAuth>} />
-          <Route path="/owner/facilities/:facilityId/discounts" element={<RequireAuth role="owner"><DiscountsPage /></RequireAuth>} />
+          {/* 예전 업체 주소(/owner...)는 시설자 모드(/biz...)로 */}
+          <Route path="/owner/*" element={<OwnerRedirect />} />
 
           {/* 관리자 전용 */}
           <Route path="/admin" element={<RequireAuth role="admin"><AdminPage /></RequireAuth>} />

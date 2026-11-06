@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { supabase, toKoreanError } from '../../lib/supabase.js'
+import { toKoreanError } from '../../lib/supabase.js'
+import { useDb } from '../../lib/dbContext.js'
 import { useAuth } from '../../hooks/authContext.js'
 import { REGIONS, SIDO_LIST } from '../../data/regions.js'
 import sports from '../../data/sports.json'
@@ -12,11 +13,12 @@ const EMPTY = {
   main_event: '', sport_ids: [], description: '',
 }
 
-// 시설 등록(/owner/facilities/new) · 수정(/owner/facilities/:facilityId/edit)
+// 시설 등록(/biz/facilities/new) · 수정(/biz/facilities/:facilityId/edit)
 export default function FacilityFormPage() {
   const { facilityId } = useParams()
   const isEdit = Boolean(facilityId)
   const { user } = useAuth()
+  const { db, isDemo, base } = useDb() // 진짜 DB 또는 체험판 DB
   const navigate = useNavigate()
   const [form, setForm] = useState(EMPTY)
   const [loaded, setLoaded] = useState(!isEdit)
@@ -27,14 +29,14 @@ export default function FacilityFormPage() {
   useEffect(() => {
     if (!isEdit) return
     let cancelled = false
-    supabase.from('facilities').select('*').eq('id', facilityId).maybeSingle().then(({ data, error }) => {
+    db.from('facilities').select('*').eq('id', facilityId).maybeSingle().then(({ data, error }) => {
       if (cancelled) return
       if (error || !data) setError(error ? toKoreanError(error) : '시설을 찾을 수 없어요.')
       else setForm(Object.fromEntries(Object.keys(EMPTY).map((k) => [k, data[k] ?? EMPTY[k]])))
       setLoaded(true)
     })
     return () => { cancelled = true }
-  }, [isEdit, facilityId])
+  }, [isEdit, facilityId, db])
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
   const toggleSport = (id) =>
@@ -60,26 +62,26 @@ export default function FacilityFormPage() {
       lng: position?.lng ?? null,
     }
     const query = isEdit
-      ? supabase.from('facilities').update(row).eq('id', facilityId)
-      : supabase.from('facilities').insert({ ...row, owner_id: user.id })
+      ? db.from('facilities').update(row).eq('id', facilityId)
+      : db.from('facilities').insert({ ...row, owner_id: user?.id ?? 'demo-owner', status: isDemo ? 'approved' : 'pending' })
     const { error } = await query
     setBusy(false)
     if (error) return setError(toKoreanError(error))
-    navigate('/owner', { replace: true })
+    navigate(base, { replace: true })
   }
 
   async function handleDelete() {
     if (!window.confirm('이 시설과 등록된 회원·출석·수강료 기록이 모두 삭제돼요. 정말 삭제할까요?')) return
-    const { error } = await supabase.from('facilities').delete().eq('id', facilityId)
+    const { error } = await db.from('facilities').delete().eq('id', facilityId)
     if (error) return setError(toKoreanError(error))
-    navigate('/owner', { replace: true })
+    navigate(base, { replace: true })
   }
 
   if (!loaded) return <Notice>⏳ 불러오는 중...</Notice>
 
   return (
     <section className="form-page">
-      <Link to="/owner" className="back-link">← 내 시설 관리</Link>
+      <Link to={base} className="back-link">← 대시보드</Link>
       <p className="eyebrow">{isEdit ? 'EDIT' : 'REGISTER'}</p>
       <h1 className="section-title">{isEdit ? '시설 정보 수정' : '시설 등록'}</h1>
       <Notice>저장하면 <strong>관리자 확인(승인 대기)</strong> 후 시설 찾기에 공개돼요.</Notice>

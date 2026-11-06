@@ -13,11 +13,11 @@ export default function Header() {
         </Link>
         <nav className="nav">
           <NavLink to="/search">시설 찾기</NavLink>
-          <NavLink to="/martial">무술</NavLink>
-          <NavLink to="/discounts">할인제도</NavLink>
+          <NavLink to="/martial" className="hide-mobile">무술</NavLink>
+          <NavLink to="/discounts" className="hide-mobile">할인제도</NavLink>
           <NavLink to="/supports" className="hide-mobile">지원 제도</NavLink>
           <NavLink to="/favorites" className="hide-mobile">즐겨찾기</NavLink>
-          {isOwner && <NavLink to="/owner">내 시설</NavLink>}
+          {isOwner && <NavLink to="/biz">🏢 시설자 모드</NavLink>}
         </nav>
         {user ? (
           <Link to="/mypage" className="btn btn-sm header-account">마이페이지</Link>

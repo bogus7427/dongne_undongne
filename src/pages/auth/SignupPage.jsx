@@ -59,7 +59,7 @@ export default function SignupPage() {
         <div className="link-buttons" style={{ marginTop: 16 }}>
           {next && <Link to={next} className="btn btn-dark">보던 화면으로 돌아가기 →</Link>}
           {form.role === 'owner'
-            ? <Link to="/owner/facilities/new" className="btn btn-dark">내 시설 등록하러 가기 →</Link>
+            ? <Link to="/biz/facilities/new" className="btn btn-dark">🏢 시설자 모드에서 시설 등록 →</Link>
             : <Link to="/search" className="btn btn-dark">시설 찾으러 가기 →</Link>}
           <Link to={`/login${next ? `?next=${encodeURIComponent(next)}` : ''}`} className="btn">로그인</Link>
         </div>

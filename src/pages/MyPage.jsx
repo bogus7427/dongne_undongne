@@ -46,7 +46,7 @@ export default function MyPage() {
           <div className="quick-links">
             <Link to="/favorites" className="btn btn-sm">♥ 즐겨찾기 ({favorites.length})</Link>
             <Link to="/search" className="btn btn-sm">🔍 시설 찾기</Link>
-            {isOwner && <Link to="/owner" className="btn btn-sm btn-dark">🏢 내 시설·회원 관리</Link>}
+            {isOwner && <Link to="/biz" className="btn btn-sm btn-dark">🏢 시설자 모드 (내 시설·회원 관리)</Link>}
             {isAdmin && <Link to="/admin" className="btn btn-sm btn-dark">🛡️ 관리자: 시설 승인</Link>}
           </div>
           {!isOwner && (

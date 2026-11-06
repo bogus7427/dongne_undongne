@@ -2,6 +2,8 @@ import { Link, useParams } from 'react-router-dom'
 import sports from '../data/sports.json'
 import supports from '../data/supports.json'
 import Notice from '../components/Notice.jsx'
+import PhotoCredit from '../components/PhotoCredit.jsx'
+import { photoUrl } from '../utils/photos.js'
 
 export default function SportDetailPage() {
   // 주소 /sports/swimming 에서 "swimming" 을 꺼냅니다.
@@ -23,7 +25,7 @@ export default function SportDetailPage() {
   return (
     <article className="sport-detail">
       {/* 상단 소개 */}
-      <header className="sport-hero">
+      <header className="sport-hero has-photo" style={{ '--photo': `url(${photoUrl(sport.id, 1600)})` }}>
         <div className="sport-hero-icon">{sport.emoji}</div>
         <div>
           <p className="eyebrow">{sport.nameEn}</p>
@@ -40,6 +42,7 @@ export default function SportDetailPage() {
             </Link>
           )}
         </div>
+        <PhotoCredit photoKey={sport.id} className="on-dark hero-credit" />
       </header>
 
       {/* 단계 (입문/초급/중급) */}

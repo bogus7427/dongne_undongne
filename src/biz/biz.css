@@ -1,0 +1,85 @@
+/* =====================================================================
+   🏢 시설자 모드 (업무용 화면) - 일반 사이트와 다르게 차분한 관리자 화면
+   ===================================================================== */
+.biz { min-height: 100vh; background: #f4f6fb; display: flex; flex-direction: column; }
+
+/* 위쪽 바 */
+.biz-top { position: sticky; top: 0; z-index: 30; height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 20px; background: #0a0f1f; color: #fff; border-bottom: 3px solid var(--lime); }
+.biz-logo { display: flex; align-items: baseline; gap: 6px; font-family: var(--font-en); font-style: italic; }
+.biz-logo span { font-weight: 900; color: #fff; }
+.biz-logo strong { font-weight: 900; color: var(--lime); }
+.biz-logo small { font-family: 'Pretendard', sans-serif; font-style: normal; font-size: 12px; color: #9aa3b8; margin-left: 6px; }
+.biz-top-right { margin-left: auto; display: flex; align-items: center; gap: 14px; font-size: 14px; }
+.biz-user { color: #9aa3b8; }
+.biz-link { color: #d6dbea; background: none; border: none; cursor: pointer; font-family: inherit; font-size: 14px; }
+.biz-link:hover { color: var(--lime); }
+.biz-cta { background: var(--lime); color: var(--black); font-weight: 800; padding: 7px 14px; border-radius: 30px; }
+.biz-menu-btn { display: none; background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+.biz-demo-note { background: #fff8db; color: #6b5800; font-size: 13px; text-align: center; padding: 8px; border-bottom: 1px solid #f0dc8a; }
+
+/* 본문: 왼쪽 메뉴 + 오른쪽 내용 */
+.biz-body { flex: 1; display: grid; grid-template-columns: 250px 1fr; }
+.biz-side { background: #fff; border-right: 1px solid #e3e7f0; padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+.biz-side-title { font-size: 12px; font-weight: 700; color: #9aa3b8; margin: 16px 8px 4px; letter-spacing: .05em; }
+.biz-side-empty { font-size: 13px; color: #9aa3b8; margin: 4px 8px; }
+.biz-nav { display: block; padding: 9px 12px; border-radius: 10px; font-size: 14px; color: #333; }
+.biz-nav:hover { background: #f1f4fa; }
+.biz-nav.active { background: var(--black); color: #fff; font-weight: 700; }
+.biz-nav.sub { padding: 7px 12px 7px 16px; font-size: 13px; }
+.biz-nav.add { margin-top: 10px; border: 1px dashed #c7cfdf; text-align: center; color: var(--navy); font-weight: 700; }
+.biz-facility { border-radius: 12px; padding: 8px 4px; }
+.biz-facility > strong { display: block; font-size: 14px; padding: 2px 8px 4px; }
+.biz-facility.is-current { background: #f4f7ff; }
+.biz-main { padding: 28px 32px 60px; min-width: 0; }
+.biz-bare { flex: 1; padding: 48px 20px; }
+
+/* 대시보드 */
+.biz-page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.biz-title { font-family: var(--font-display); font-weight: 400; font-size: 32px; margin: 0; }
+.biz-page-head .muted { margin: 4px 0 0; }
+.biz-facility-card { margin-bottom: 16px; }
+.biz-facility-card h2 { margin: 0; font-size: 20px; }
+.biz-facility-card:hover { transform: none; }
+.biz-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.biz-stat { background: #f4f6fb; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 4px; border: 2px solid transparent; transition: border-color .2s; }
+.biz-stat:hover { border-color: var(--navy); }
+.biz-stat span { font-size: 13px; color: var(--muted); }
+.biz-stat strong { font-family: var(--font-en); font-weight: 900; font-style: italic; font-size: 32px; color: var(--navy); }
+.biz-stat strong small { font-size: 15px; color: var(--muted); font-style: normal; }
+.biz-stat.warn strong { color: #d33; }
+
+/* 시설자 모드 안에서는 일반 사이트용 큰 제목을 조금 작게 */
+.biz-main .section-title { font-size: 30px; }
+
+/* 모바일: 왼쪽 메뉴를 ☰ 버튼으로 열기 */
+@media (max-width: 860px) {
+  .biz-menu-btn { display: block; }
+  .biz-body { grid-template-columns: 1fr; }
+  .biz-side { display: none; position: fixed; top: 60px; left: 0; bottom: 0; width: 260px; z-index: 40; box-shadow: 8px 0 30px rgba(0,0,0,.15); }
+  .biz-side.is-open { display: flex; }
+  .biz-main { padding: 20px 16px 48px; }
+  .biz-user, .biz-logo small { display: none; }
+  .biz-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .biz-stat strong { font-size: 24px; }
+}
+
+/* 개인정보 가림 토글 */
+.type-tabs .privacy-toggle { margin: 0 0 0 auto !important; padding: 6px 14px !important; border-bottom: 1px solid #ccd3e2 !important; color: #333; border: 1px solid #ccd3e2; background: #fff; border-radius: 30px !important; padding: 6px 14px; font-size: 13px; font-family: inherit; cursor: pointer; align-self: center; }
+.type-tabs .privacy-toggle.is-open { border-bottom-color: #ffb36b !important; background: #fff4e5; border-color: #ffb36b; color: #a14b00; font-weight: 700; }
+
+/* 문자·카톡 탭 */
+.message-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px; margin-top: 16px; }
+.message-grid .card:hover { transform: none; }
+.message-grid .sub-title:first-child { margin-top: 0; }
+.recipient-list { list-style: none; margin: 8px 0; padding: 0; max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; }
+.recipient-list li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.recipient-list li:last-child { border-bottom: none; }
+.recipient-list li span { margin-left: auto; font-size: 13px; }
+.message-input { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: var(--radius); font-size: 15px; font-family: inherit; resize: vertical; margin-top: 8px; }
+.form-inline { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; margin: 12px 0 0; }
+.form-inline input { padding: 10px 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; font-family: inherit; }
+.phone-preview { background: #eef1f7; border-radius: 14px; padding: 12px 14px; margin: 12px 0; }
+.bubble { background: #fff; border-radius: 14px 14px 14px 4px; padding: 12px 14px; font-size: 14px; white-space: pre-line; max-width: 360px; box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+.checkbox.agree { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: #555; margin: 8px 0 12px; }
+.checkbox.agree input { margin-top: 3px; }
+@media (max-width: 960px) { .message-grid { grid-template-columns: 1fr; } }

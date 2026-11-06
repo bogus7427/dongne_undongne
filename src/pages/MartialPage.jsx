@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import sports from '../data/sports.json'
 import SportCard from '../components/SportCard.jsx'
 import Notice from '../components/Notice.jsx'
+import PhotoCredit from '../components/PhotoCredit.jsx'
+import { photoUrl } from '../utils/photos.js'
 
 const martialArts = sports.filter((s) => s.group === 'martial')
 
@@ -9,7 +11,7 @@ const martialArts = sports.filter((s) => s.group === 'martial')
 export default function MartialPage() {
   return (
     <section>
-      <div className="martial-hero">
+      <div className="martial-hero has-photo" style={{ '--photo': `url(${photoUrl('martial', 1600)})` }}>
         <p className="eyebrow eyebrow-light">MARTIAL ARTS</p>
         <h1>🥋 무술 통합 찾기</h1>
         <p>태권도·합기도·주짓수·유도·킥복싱·복싱·검도·무에타이·종합격투기까지<br className="only-pc" />
@@ -18,6 +20,7 @@ export default function MartialPage() {
           <Link to="/search?type=voucher&sport=martial" className="btn btn-white">📍 우리 동네 무술 도장 찾기</Link>
           <Link to="/search?sport=martial" className="btn btn-outline-light">🏟️ 공공 투기체육관 찾기</Link>
         </div>
+        <PhotoCredit photoKey="martial" className="on-dark hero-credit" />
       </div>
 
       <section className="section">

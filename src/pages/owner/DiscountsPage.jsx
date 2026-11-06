@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { supabase, toKoreanError } from '../../lib/supabase.js'
+import { toKoreanError } from '../../lib/supabase.js'
+import { useDb } from '../../lib/dbContext.js'
 import { PERIOD_MONTHS, buildPeriodRows, discountText } from '../../utils/discounts.js'
 import DiscountSection from '../../components/DiscountSection.jsx'
 import Notice from '../../components/Notice.jsx'
@@ -10,8 +11,9 @@ const EMPTY_DISCOUNT = {
   condition: '', starts_on: '', ends_on: '',
 }
 
-// 업체용: 할인 제도 관리 (/owner/facilities/:facilityId/discounts)
+// 업체용: 할인 제도 관리 (/biz/facilities/:facilityId/discounts)
 export default function DiscountsPage() {
+  const { db, base } = useDb() // 진짜 DB 또는 체험판 DB
   const { facilityId } = useParams()
   const [facility, setFacility] = useState(null)
   const [pricing, setPricing] = useState({ monthly_price: '', period_rates: {}, note: '' })
@@ -20,18 +22,18 @@ export default function DiscountsPage() {
   const [message, setMessage] = useState(null)
 
   const loadDiscounts = useCallback(async () => {
-    const { data, error } = await supabase.from('facility_discounts').select('*')
+    const { data, error } = await db.from('facility_discounts').select('*')
       .eq('facility_id', facilityId).order('created_at')
     if (error) setMessage({ type: 'error', text: toKoreanError(error) })
     else setDiscounts(data)
-  }, [facilityId])
+  }, [facilityId, db])
 
   useEffect(() => {
     let cancelled = false
     Promise.all([
-      supabase.from('facilities').select('id, name, status').eq('id', facilityId).maybeSingle(),
-      supabase.from('facility_pricing').select('*').eq('facility_id', facilityId).maybeSingle(),
-      supabase.from('facility_discounts').select('*').eq('facility_id', facilityId).order('created_at'),
+      db.from('facilities').select('id, name, status').eq('id', facilityId).maybeSingle(),
+      db.from('facility_pricing').select('*').eq('facility_id', facilityId).maybeSingle(),
+      db.from('facility_discounts').select('*').eq('facility_id', facilityId).order('created_at'),
     ]).then(([f, p, d]) => {
       if (cancelled) return
       const error = f.error || p.error || d.error
@@ -42,7 +44,7 @@ export default function DiscountsPage() {
       setLoaded(true)
     })
     return () => { cancelled = true }
-  }, [facilityId])
+  }, [facilityId, db])
 
   // ---------- 기간권 저장 ----------
   function setRate(months, value) {
@@ -58,7 +60,7 @@ export default function DiscountsPage() {
       if (!(r > 0 && r < 100)) return setMessage({ type: 'error', text: `${m}개월 할인율은 1~99 사이 숫자로 적어 주세요.` })
       rates[m] = r
     }
-    const { error } = await supabase.from('facility_pricing').upsert({
+    const { error } = await db.from('facility_pricing').upsert({
       facility_id: facilityId,
       monthly_price: Number(pricing.monthly_price) || 0,
       period_rates: rates,
@@ -78,7 +80,7 @@ export default function DiscountsPage() {
 
   return (
     <section>
-      <Link to="/owner" className="back-link">← 내 시설 관리</Link>
+      <Link to={base} className="back-link">← 대시보드</Link>
       <p className="eyebrow">DISCOUNTS</p>
       <h1 className="section-title">{facility?.name || '시설'} 할인 제도</h1>
       <p className="section-desc">
@@ -125,6 +127,7 @@ export default function DiscountsPage() {
 }
 
 function DiscountEditor({ facilityId, discounts, reload, setMessage }) {
+  const { db } = useDb() // 진짜 DB 또는 체험판 DB
   const [form, setForm] = useState(EMPTY_DISCOUNT)
   const [editingId, setEditingId] = useState(null)
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value })
@@ -157,8 +160,8 @@ function DiscountEditor({ facilityId, discounts, reload, setMessage }) {
       ends_on: form.ends_on || null,
     }
     const { error } = editingId
-      ? await supabase.from('facility_discounts').update(row).eq('id', editingId)
-      : await supabase.from('facility_discounts').insert({ ...row, facility_id: facilityId })
+      ? await db.from('facility_discounts').update(row).eq('id', editingId)
+      : await db.from('facility_discounts').insert({ ...row, facility_id: facilityId })
     if (error) return setMessage({ type: 'error', text: toKoreanError(error) })
     setMessage({ type: 'info', text: '할인을 저장했어요. ✅' })
     setForm(EMPTY_DISCOUNT)
@@ -167,14 +170,14 @@ function DiscountEditor({ facilityId, discounts, reload, setMessage }) {
   }
 
   async function toggleActive(d) {
-    const { error } = await supabase.from('facility_discounts').update({ active: !d.active }).eq('id', d.id)
+    const { error } = await db.from('facility_discounts').update({ active: !d.active }).eq('id', d.id)
     if (error) setMessage({ type: 'error', text: toKoreanError(error) })
     else reload()
   }
 
   async function remove(d) {
     if (!window.confirm(`"${d.title}" 할인을 삭제할까요?`)) return
-    const { error } = await supabase.from('facility_discounts').delete().eq('id', d.id)
+    const { error } = await db.from('facility_discounts').delete().eq('id', d.id)
     if (error) setMessage({ type: 'error', text: toKoreanError(error) })
     else reload()
   }
