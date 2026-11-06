@@ -1,0 +1,10 @@
+[
+  { "id": "kspo", "type": "info", "icon": "🏛️", "label": "국민체육진흥공단", "text": "체육 지원 사업 한눈에", "href": "https://www.kspo.or.kr" },
+  { "id": "sports-or", "type": "info", "icon": "🏅", "label": "대한체육회", "text": "생활체육·공공스포츠클럽", "href": "https://www.sports.or.kr" },
+  { "id": "kukkiwon", "type": "martial", "icon": "🥋", "label": "국기원", "text": "태권도 품·단 심사 정보", "href": "https://www.kukkiwon.or.kr" },
+  { "id": "kta", "type": "martial", "icon": "🥋", "label": "대한태권도협회", "text": "태권도 대회·도장 소식", "href": "https://www.koreataekwondo.co.kr" },
+  { "id": "decathlon", "type": "gear", "icon": "🛒", "label": "데카트론", "text": "종목별 운동용품", "href": "https://www.decathlon.co.kr" },
+  { "id": "arena", "type": "gear", "icon": "🏊", "label": "아레나", "text": "수영복·수경", "href": "https://www.arena.co.kr" },
+  { "id": "naver-gear", "type": "gear", "icon": "🔍", "label": "네이버쇼핑", "text": "운동용품 최저가 비교", "href": "https://search.shopping.naver.com/search/all?query=%EC%9A%B4%EB%8F%99%EC%9A%A9%ED%92%88" },
+  { "id": "naver-martial", "type": "gear", "icon": "🥊", "label": "네이버쇼핑", "text": "도복·글러브·보호대", "href": "https://search.shopping.naver.com/search/all?query=%EB%8F%84%EB%B3%B5%20%EA%B8%80%EB%9F%AC%EB%B8%8C%20%EB%B3%B4%ED%98%B8%EB%8C%80" }
+]

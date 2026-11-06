@@ -1,0 +1,251 @@
+[
+  {
+    "id": "sports-voucher",
+    "name": "스포츠강좌이용권",
+    "emoji": "💳",
+    "category": "money",
+    "audiences": [
+      "youth"
+    ],
+    "org": "문화체육관광부 · 국민체육진흥공단",
+    "target": "저소득층 유·청소년 (만 5~18세, 소득·지원 이력 등으로 선정)",
+    "summary": "등록된 체육시설의 스포츠 강좌 수강료를 매달 지원해요.",
+    "howTo": [
+      "복지로 또는 주민센터에서 신청",
+      "선정되면 카드로 등록 시설에서 결제"
+    ],
+    "links": [
+      {
+        "label": "스포츠강좌이용권 공식 사이트",
+        "href": "https://svoucher.kspo.or.kr"
+      },
+      {
+        "label": "복지로 안내·신청",
+        "href": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00000076&wlfareInfoReldBztpCd=01"
+      }
+    ],
+    "searchPath": "/search?type=voucher",
+    "contact": "1551-0078",
+    "sportIds": [
+      "swimming",
+      "fitness",
+      "yoga",
+      "pilates",
+      "badminton",
+      "tabletennis",
+      "tennis",
+      "soccer",
+      "martial"
+    ]
+  },
+  {
+    "id": "disabled-voucher",
+    "name": "장애인스포츠강좌이용권",
+    "emoji": "♿",
+    "category": "money",
+    "audiences": [
+      "disabled"
+    ],
+    "org": "문화체육관광부 · 국민체육진흥공단",
+    "target": "등록 장애인 (소득과 관계없이, 나이 기준은 해마다 공고 확인)",
+    "summary": "장애인이 등록 시설에서 스포츠 강좌를 들을 수 있도록 수강료를 매달 지원해요.",
+    "howTo": [
+      "복지로 또는 주민센터에서 신청",
+      "선정되면 카드로 등록 시설에서 결제"
+    ],
+    "links": [
+      {
+        "label": "장애인스포츠강좌이용권 공식 사이트",
+        "href": "https://dvoucher.kspo.or.kr"
+      },
+      {
+        "label": "복지로에서 신청",
+        "href": "https://www.bokjiro.go.kr"
+      }
+    ],
+    "sportIds": [
+      "swimming",
+      "fitness",
+      "badminton",
+      "tabletennis",
+      "martial"
+    ]
+  },
+  {
+    "id": "fitness-tax",
+    "name": "헬스장·수영장 이용료 소득공제",
+    "emoji": "🧾",
+    "category": "money",
+    "audiences": [
+      "worker"
+    ],
+    "org": "문화체육관광부 · 국세청",
+    "target": "총급여 7천만 원 이하 근로소득자 (사업자·프리랜서 제외)",
+    "summary": "2025년 7월 1일 결제분부터 헬스장·수영장 이용료의 30%를 문화비로 소득공제해요. 문체부가 지정한 사업자(시설)에서 결제해야 해요.",
+    "howTo": [
+      "다니는 시설이 문화비 소득공제 사업자인지 확인",
+      "카드로 결제하면 연말정산 때 자동 반영"
+    ],
+    "links": [
+      {
+        "label": "문화비 소득공제 안내",
+        "href": "https://www.culture.go.kr/deduction"
+      },
+      {
+        "label": "문체부 보도자료",
+        "href": "https://www.mcst.go.kr/kor/s_notice/press/pressView.jsp?pSeq=21547"
+      }
+    ],
+    "sportIds": [
+      "swimming",
+      "fitness"
+    ]
+  },
+  {
+    "id": "fitness100",
+    "name": "국민체력100",
+    "emoji": "📏",
+    "category": "program",
+    "audiences": [
+      "everyone",
+      "senior",
+      "youth"
+    ],
+    "org": "문화체육관광부 · 국민체육진흥공단",
+    "target": "유아(만 4~6세)와 만 11세 이상 국민 누구나",
+    "summary": "전국 체력인증센터에서 무료로 체력을 측정하고, 내 체력에 맞는 운동 처방과 상담을 받을 수 있어요.",
+    "howTo": [
+      "공식 사이트에서 가까운 체력인증센터 찾기",
+      "예약 후 방문해 측정·상담 (무료)"
+    ],
+    "links": [
+      {
+        "label": "국민체력100 공식 사이트",
+        "href": "https://nfa.kspo.or.kr"
+      }
+    ],
+    "sportIds": [
+      "fitness"
+    ]
+  },
+  {
+    "id": "senior-programs",
+    "name": "어르신 스포츠강좌 프로그램",
+    "emoji": "👵",
+    "category": "program",
+    "audiences": [
+      "senior"
+    ],
+    "org": "문화체육관광부 · 지자체",
+    "target": "어르신 (지역·프로그램마다 나이 기준이 달라요)",
+    "summary": "집 가까운 곳에서 부담 없이 운동할 수 있도록 지역별 어르신 스포츠 강좌를 지원해요. 2026년 공모로 운영 지역이 선정됐어요.",
+    "howTo": [
+      "시·군·구청 체육 담당 부서나 지역 체육회에 문의",
+      "경로당·복지관·체육센터의 어르신 강좌 확인"
+    ],
+    "links": [
+      {
+        "label": "2026년 공모 결과 (문체부)",
+        "href": "https://www.mcst.go.kr/site/s_notice/press/pressView.jsp?pSeq=22287"
+      }
+    ],
+    "searchQuery": "어르신 스포츠강좌 프로그램 2026",
+    "sportIds": []
+  },
+  {
+    "id": "disabled-classes",
+    "name": "장애인 생활체육교실",
+    "emoji": "🤸‍♀️",
+    "category": "program",
+    "audiences": [
+      "disabled"
+    ],
+    "org": "대한장애인체육회 · 시·군·구 장애인체육회",
+    "target": "지역 장애인 (교실마다 정원 10~20명 정도)",
+    "summary": "볼링, 탁구, 수영, 스트레칭 같은 생활체육교실과 동호인 클럽을 지역별로 운영해요.",
+    "howTo": [
+      "대한장애인체육회에서 생활체육 정보 확인",
+      "거주지 시·군·구 장애인체육회에 신청"
+    ],
+    "links": [
+      {
+        "label": "대한장애인체육회",
+        "href": "https://www.koreanpc.kr"
+      }
+    ],
+    "searchQuery": "장애인 생활체육교실 신청",
+    "sportIds": [
+      "tabletennis",
+      "swimming"
+    ]
+  },
+  {
+    "id": "bandabi",
+    "name": "반다비 체육센터",
+    "emoji": "🏟️",
+    "category": "place",
+    "audiences": [
+      "disabled",
+      "everyone"
+    ],
+    "org": "문화체육관광부 · 지자체",
+    "target": "장애인 우선, 비장애인도 함께 이용",
+    "summary": "장애인과 비장애인이 함께 쓰는 동네 공공체육센터예요. 체육관형·수영장형·종목특화형이 있고, 전국에 계속 생기고 있어요.",
+    "howTo": [
+      "검색으로 우리 동네 반다비 체육센터 찾기",
+      "시설 홈페이지에서 프로그램·이용료 확인"
+    ],
+    "links": [],
+    "searchQuery": "반다비 체육센터",
+    "sportIds": [
+      "swimming",
+      "fitness"
+    ]
+  },
+  {
+    "id": "sports-club",
+    "name": "공공스포츠클럽",
+    "emoji": "🤝",
+    "category": "program",
+    "audiences": [
+      "everyone",
+      "youth",
+      "senior"
+    ],
+    "org": "문화체육관광부 · 대한체육회",
+    "target": "지역 주민 누구나",
+    "summary": "지역 공공시설을 거점으로 여러 종목을 저렴하게 배울 수 있는 지역 스포츠클럽이에요.",
+    "howTo": [
+      "검색으로 우리 지역 공공스포츠클럽 찾기",
+      "클럽에 회원 가입 후 프로그램 참여"
+    ],
+    "links": [
+      {
+        "label": "대한체육회",
+        "href": "https://www.sports.or.kr"
+      }
+    ],
+    "searchQuery": "공공스포츠클럽",
+    "sportIds": []
+  },
+  {
+    "id": "local-programs",
+    "name": "지자체 생활체육 강좌",
+    "emoji": "🏛️",
+    "category": "program",
+    "audiences": [
+      "everyone"
+    ],
+    "org": "시·군·구청, 시설관리공단",
+    "target": "지역 주민 (시설마다 다름)",
+    "summary": "구민체육센터·국민체육센터 등 공공시설에서 비교적 저렴한 강좌를 운영해요. 장애인·어르신·다자녀 감면이 있는 곳도 많아요.",
+    "howTo": [
+      "'시설 찾기'에서 우리 동네 공공시설 찾기",
+      "시설 상세의 공식 홈페이지·검색 링크에서 강좌 확인"
+    ],
+    "links": [],
+    "searchPath": "/search?mode=region",
+    "searchQuery": "생활체육 강좌 신청",
+    "sportIds": []
+  }
+]
